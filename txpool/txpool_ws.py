@@ -24,7 +24,7 @@ class TestTxpoolNamespaceWS(unittest.TestCase):
             "to": test_data_set["account"]["receiver"]["address"],
             "gas": hex(304000),
             "gasPrice": test_data_set["unitGasPrice"],
-            "value": hex(Utils.to_peb(3)),
+            "value": hex(Utils.to_kei(3)),
         }
         password = test_data_set["account"]["sender"]["password"]
 
@@ -32,7 +32,7 @@ class TestTxpoolNamespaceWS(unittest.TestCase):
         self.assertIsNone(error)
 
         tx_fields["to"] = test_data_set["contracts"]["unknown"]["address"][0]
-        tx_fields["value"] = hex(Utils.to_peb(1.5))
+        tx_fields["value"] = hex(Utils.to_kei(1.5))
 
         _, error = personal_common.send_transaction(self.endpoint, [tx_fields, password])
         self.assertIsNone(error)

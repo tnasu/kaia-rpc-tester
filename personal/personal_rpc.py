@@ -192,7 +192,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
     def test_personal_sendTransaction_error_no_param4(self):
         password = test_data_set["account"]["sender"]["password"]
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction({"gasPrice": gas_price, "value": value}, password)
         Utils.check_error(self, "ContractCreationWithoutData", error)
@@ -202,7 +202,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction({"to": to, "gas": gas, "gasPrice": gas_price, "value": value}, password)
         Utils.check_error(self, "UnknownAccount", error)
@@ -211,7 +211,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         sender = test_data_set["account"]["sender"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction({"from": sender, "gas": gas, "gasPrice": gas_price, "value": value}, None)
         Utils.check_error(self, "arg1NoParams", error)
@@ -247,7 +247,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         sender = test_data_set["account"]["sender"]["address"]
         password = test_data_set["account"]["sender"]["password"]
         to = test_data_set["account"]["receiver"]["address"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction({"from": sender, "to": to, "value": value}, password)
         self.assertIsNone(error)
@@ -257,7 +257,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         password = test_data_set["account"]["sender"]["password"]
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction({"from": sender, "to": to, "gas": gas, "value": value}, password)
         self.assertIsNone(error)
@@ -267,7 +267,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {"from": 1234, "to": to, "gas": gas, "gasPrice": gas_price, "value": value},
@@ -280,7 +280,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         password = test_data_set["account"]["sender"]["password"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {
@@ -299,7 +299,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         password = test_data_set["account"]["sender"]["password"]
         to = test_data_set["account"]["receiver"]["address"]
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {
@@ -318,7 +318,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         password = test_data_set["account"]["sender"]["password"]
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {"from": sender, "to": to, "gas": gas, "gasPrice": 1234, "value": value},
@@ -350,7 +350,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {
@@ -370,7 +370,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {
@@ -390,7 +390,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {
@@ -410,7 +410,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(30)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {
@@ -430,7 +430,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = hex(25)
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {
@@ -448,7 +448,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         method = f"{self.ns}_newAccount"
         result, error = Utils.call_rpc(self.endpoint, method, [""], self.log_path)
@@ -473,7 +473,7 @@ class TestPersonalNamespaceRPC(unittest.TestCase):
         to = test_data_set["account"]["receiver"]["address"]
         gas = hex(304000)
         gas_price = test_data_set["unitGasPrice"]
-        value = hex(Utils.to_peb(1.5))
+        value = hex(Utils.to_kei(1.5))
 
         _, error = self.send_transaction(
             {

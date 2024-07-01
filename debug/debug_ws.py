@@ -472,7 +472,7 @@ class TestDebugNamespaceWS(unittest.TestCase):
             "to": to,
             "gas": hex(304000),
             "gasPrice": test_data_set["unitGasPrice"],
-            "value": hex(Utils.to_peb(1.5)),
+            "value": hex(Utils.to_kei(1.5)),
         }
         if data != "":
             tx_fields["data"] = data
