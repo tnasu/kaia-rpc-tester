@@ -7,7 +7,7 @@ The tester checks basic operations of Kaia RPC/WebSocket APIs.
 > You can setup the project Environment as separate env from your globally installed python dev environemnt by using virtualenv.
 
 Please check below instructions after installing virtualenv :)
-- Create virtualenv for this project by using `$ virtualenv -p python3.6 venv` or `$ python3 -m venv ./venv`
+- Create virtualenv for this project by using `$ virtualenv -p python3.6 venv`
 - Activate virtualenv by using `source ./venv/bin/activate`
 - Install project dependency by using `$ pip install -r requirements.txt`
 - Install this repository as module to use relative path `$pip install -e .`
