@@ -29,7 +29,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"from": txFrom}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -42,7 +42,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"gasPrice": txGasPrice, "value": txValue}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -55,7 +55,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"to": txTo, "gas": txGas, "gasPrice": txGasPrice, "value": txValue}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -68,7 +68,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"from": txFrom, "to": txTo}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -81,7 +81,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"from": txFrom, "to": txTo, "gas": txGas}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -94,7 +94,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"from": txFrom, "to": txTo, "gas": txGas, "gasPrice": txGasPrice}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -107,7 +107,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"from": txFrom, "to": txTo, "value": txValue}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -120,7 +120,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [{"from": txFrom, "to": txTo, "gas": txGas, "value": txValue}]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
@@ -133,7 +133,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -154,7 +154,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -175,7 +175,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -196,7 +196,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -217,7 +217,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -238,7 +238,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -259,7 +259,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -280,7 +280,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -301,7 +301,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = hex(25)
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -321,7 +321,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [txFrom, "latest"]
         result, error = Utils.call_rpc(self.endpoint, "eth_getBalance", params, self.log_path)
@@ -347,7 +347,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         txTo = test_data_set["account"]["sender"]["address"]
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
-        txValue = hex(Utils.to_peb(1.5))
+        txValue = hex(Utils.to_kei(1.5))
 
         params = [
             {
@@ -669,7 +669,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-        method = "klay_chainID"
+        method = "kaia_chainID"
         params = []
         chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
@@ -727,7 +727,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-        method = "klay_chainID"
+        method = "kaia_chainID"
         params = []
         chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
