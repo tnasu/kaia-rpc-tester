@@ -2,36 +2,49 @@
 
 The tester checks basic operations of Kaia RPC/WebSocket APIs.
 
-# How to run
-## Python Virtualenv
-> You can setup the project Environment as separate env from your globally installed python dev environemnt by using virtualenv.
+## How to Setup the Test
+### Install Python Libraries
+* Python3 should be installed: `python3`
+* Create virtual environment: `python3 -m venv venv`
+* Activate virtualenv: `source venv/bin/activate`
+* Install python libraries: `pip install -r requirements.txt`
 
-Please check below instructions after installing virtualenv :)
-- Create virtualenv for this project by using `$ virtualenv -p python3.6 venv`
-- Activate virtualenv by using `source ./venv/bin/activate`
-- Install project dependency by using `$ pip install -r requirements.txt`
-- Install this repository as module to use relative path `$pip install -e .`
+### Run the private network
+* Copy `config_template.json` as `config.json`
+* cd `script` directory. Cautious, below commands will only work at the `script` directory.
+* First of all, locate the kcn binary file which has the target test version inside the `cn/bin`. (e.g. kaia-v1.0.1). You can utilize the below script.
+* Then, run the provided script to deploy cn1 private network in your local environment: `./set_CNonly.sh`
+* Check the log to see the network works well: `tail -f cn/data/kcn/logs/kcnd.out`
+* Generate block.rlp: `cn/bin/kcn --exec "debug.getBlockRlp(5)" attach cn/data/klay.ipc | sed 's/"//g' > cn/data/block.rlp` (you can change the block number for block rlp)
+For the kcn binary file, if you want to use prebuilt binary, locate next script under `script` directory and run it. You can change the VERSION.
+```script
+VERSION="v1.0.1"
 
-All done :)
-
-## Required
-- [1] Faucet Account: An account which has enough amount KAIA for the test.
-### For EN (to be tested)
-- Options 
-  1. --rpc --rpcapi admin,debug,kaia,eth,miner,net,personal,rpc,txpool,web3 --rpcport 8551 --rpcaddr 0.0.0.0
-  2. --ws --wsapi admin,debug,kaia,eth,miner,net,personal,rpc,txpool,web3 --wsport 8552 --wsaddr 0.0.0.0
-  3. --sendertxhashindexing
-  4. --vmdebug
-  5. --txpool.allow-local-anchortx
-
-```shell
---rpc --rpcapi admin,debug,kaia,eth,miner,net,personal,rpc,txpool,web3 --rpcport 8551 --rpcaddr 0.0.0.0 --ws --wsapi admin,debug,kaia,miner,net,personal,rpc,txpool,web3 --wsport 8552 --wsaddr 0.0.0.0 --sendertxhashindexing --vmdebug
+OS=$(uname -s | tr '[:upper:]' '[:lower:]') # Linux or Darwin
+if [ ${OS} = "darwin" ]; then
+  URL="https://packages.kaia.io/kaia/${VERSION}/kcn-${VERSION}-0-${OS}-arm64.tar.gz"
+else
+  URL="https://packages.kaia.io/kaia/${VERSION}/kcn-${VERSION}-0-${OS}-amd64.tar.gz"
+fi
+echo $URL
+wget ${URL} -O bin.tar.gz && tar -xvf bin.tar.gz && mv kcn-*/bin/kcn cn/bin/kcn
+rm -rf kcn-* bin.tar.gz
+echo "Download complete and moved to cn/bin"
 ```
 
-- File 
-  1. `block.rlp` should be placed at the EN excution path. The content of `block.rlp` is needed to be updated with the return value of `
+If the `set_CNonly.sh` script doesn't work, please run your own EN. If script works, go to `Usage-1`. Then, when finished, check the result(`Usage-4`).
+It is fully tested in macos environment, but not in linux.
+
+### Requirement EN (to be tested)
+- Faucet Account: You should provide an account which has enough amount KAIA for the test.
+
+- Options: You should give next flags. You can refer script/cn/conf/kcnd.conf file.
+  1. `--rpc --rpcapi admin,debug,kaia,eth,miner,net,personal,rpc,txpool,web3 --rpcport 8551 --rpcaddr 0.0.0.0`
+  2. `--ws --wsapi admin,debug,kaia,eth,miner,net,personal,rpc,txpool,web3 --wsport 8552 --wsaddr 0.0.0.0`
+  3. `--sendertxhashindexing --vmdebug --txpool.allow-local-anchortx`
+
+- `block.rlp`: It should be placed at the EN excution path. The content of `block.rlp` is needed to be updated with the return value of `
   debug_getblockrlp` API.
-  2. `script/set_CNOnly.sh` - Script to set a private network with 1 CN easily.   
 
 ## Usage
 ### 0. Set config.json and run generate_ws_from_rpc.sh
@@ -73,6 +86,13 @@ If you want to run tests for specific protocol, you can do like below.
 (venv) rpc-tester$ python main.py --protocol rpc
 # Run tests only by websocket
 (venv) rpc-tester$ python main.py --protocol ws
+```
+
+### 4. Check test result
+The html test report will be created under `testReport` directory. You can drag the file to the browser and read it.
+```script
+$ ls testReport 
+KaiaTestReport_2024-07-23_14-09-44.html
 ```
 
 # Project structure overview

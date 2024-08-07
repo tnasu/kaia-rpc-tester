@@ -16,4 +16,16 @@ config.json
 reports/
 testReport/
 __pycache__
-block.rlp
+
+# Script
+script/cn/data/block.rlp
+script/cn/data/kcn
+script/cn/data/kcnd.pid
+script/cn/data/klay/LOCK
+script/cn/data/klay/bls-nodekey
+script/cn/data/klay/transactions.rlp
+script/cn/data/klay/chaindata
+script/cn/data/keystore/UTC--*
+script/cn/bin/kcn
+script/*.trace
+script/*.profile

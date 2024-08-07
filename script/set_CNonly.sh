@@ -1,3 +1,3 @@
-rm -rf cn/data/klay/chaindata/ network-local/cn/data/klay/LOCK network-local/cn/data/klay/transactions.rlp
+rm -rf cn/data/klay/chaindata/ cn/data/klay/LOCK cn/data/klay/transactions.rlp cn/data/keystore/UTC--* *.profile *.trace
 cn/bin/kcn init --datadir cn/data genesis.json
-./cn/bin/kcnd start
+cn/bin/kcnd start
