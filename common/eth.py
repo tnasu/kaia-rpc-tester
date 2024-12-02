@@ -79,7 +79,6 @@ def checkEthereumBlockOrHeaderFormat(self, actualReturn):
             "size": "0x23a",
             "stateRoot": "0x1076e6726164bd6f74720a717242584109f37c55017d004eefccf9ec3be76c18",
             "timestamp": "0x61b0a6c6",
-            "totalDifficulty": "0x7a58841ac2bdc5d1e97",
             "uncles": [],
             "transactions": [],
             "transactionsRoot": "0x6ec8daca98c1005d9bbd7716b5e94180e2bf0e6b77770174563a166337369344"
