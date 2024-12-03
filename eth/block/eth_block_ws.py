@@ -87,6 +87,15 @@ class TestEthNamespaceBlockWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_eth_getStorageAt_success_eoa_with_code(self):
+        method = f"{self.ns}_getStorageAt"
+        eoaWithCode = test_data_set["account"]["eoaWithCode"]["address"]
+        position = "0x0"
+        tag = "latest"
+        params = [eoaWithCode, position, tag]
+        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
     def test_eth_getBlockTransactionCountByHash_error_no_param(self):
         txFrom = test_data_set["account"]["sender"]["address"]
         txTo = test_data_set["account"]["receiver"]["address"]
@@ -512,6 +521,7 @@ class TestEthNamespaceBlockWS(unittest.TestCase):
         suite.addTest(TestEthNamespaceBlockWS("test_eth_getStorageAt_error_wrong_type_param2"))
         suite.addTest(TestEthNamespaceBlockWS("test_eth_getStorageAt_success_wrong_value_param"))
         suite.addTest(TestEthNamespaceBlockWS("test_eth_getStorageAt_success"))
+        suite.addTest(TestEthNamespaceBlockWS("test_eth_getStorageAt_success_eoa_with_code"))
 
         suite.addTest(TestEthNamespaceBlockWS("test_eth_getBlockTransactionCountByHash_error_no_param"))
         suite.addTest(TestEthNamespaceBlockWS("test_eth_getBlockTransactionCountByHash_error_wrong_type_param"))

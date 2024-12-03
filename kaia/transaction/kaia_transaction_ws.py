@@ -947,6 +947,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
             result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
             self.assertIsNone(error)
             kaia_common.checkGasPriceField(self, result)
+            kaia_common.checkAuthorizationListField(self, result)
 
     def test_kaia_getTransactionByBlockNumberAndIndex_error_no_param(self):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"
@@ -971,6 +972,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
             result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
             self.assertIsNone(error)
             kaia_common.checkGasPriceField(self, result)
+            kaia_common.checkAuthorizationListField(self, result)
 
     def test_kaia_getTransactionReceipt_error_no_param(self):
         method = f"{self.ns}_getTransactionReceipt"
@@ -998,6 +1000,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
             result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
             self.assertIsNone(error)
             kaia_common.checkGasPriceField(self, result)
+            kaia_common.checkAuthorizationListField(self, result)
             self.assertIsNotNone(result["effectiveGasPrice"])
 
     def test_kaia_call_error_no_param1(self):
@@ -1521,6 +1524,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
             self.assertIsNone(error)
             self.assertIsNotNone(result)
             kaia_common.checkGasPriceField(self, result)
+            kaia_common.checkAuthorizationListField(self, result)
 
     def test_kaia_getTransactionBySenderTxHash_error_no_param(self):
         method = f"{self.ns}_getTransactionBySenderTxHash"

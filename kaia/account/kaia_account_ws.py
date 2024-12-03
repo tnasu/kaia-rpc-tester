@@ -91,6 +91,13 @@ class TestKaiaNamespaceAccountWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, [address, "latest"], self.log_path)
         self.assertIsNone(error)
 
+    def test_kaia_getAccount_success_eoa_with_code(self):
+        address = test_data_set["account"]["eoaWithCode"]["address"]
+        method = f"{self.ns}_getAccount"
+        result, error = Utils.call_ws(self.endpoint, method, [address, "latest"], self.log_path)
+        self.assertIsNone(error)
+        kaia_common.checkIfEoaFollowKIP228(self, result)
+
     def test_kaia_getAccountKey_error_no_param(self):
         block_number = kaia_common.get_block_number(self.endpoint)
         self.assertIsNotNone(block_number)
@@ -202,6 +209,15 @@ class TestKaiaNamespaceAccountWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_kaia_isContractAccount_success_eoa_with_code(self):
+        method = f"{self.ns}_isContractAccount"
+        address = test_data_set["account"]["eoaWithCode"]["address"]
+        tag = "latest"
+        params = [address, tag]
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertTrue(result)
+
     def test_kaia_getTransactionCount_error_no_param(self):
         method = f"{self.ns}_getTransactionCount"
         address = test_data_set["account"]["sender"]["address"]
@@ -281,6 +297,18 @@ class TestKaiaNamespaceAccountWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_kaia_getCode_success_eoa_with_code(self):
+        block_number = kaia_common.get_block_number(self.endpoint)
+        self.assertIsNotNone(block_number)
+
+        method = f"{self.ns}_getCode"
+        tag = "latest"
+        eoaWithCodeAddress = test_data_set["account"]["eoaWithCode"]["address"]
+        params = [eoaWithCodeAddress, tag]
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(result, "0xef0100000000000000000000000000000000000000aaaa") # Expected value for delegation
+
     def test_kaia_sign_error_no_param(self):
         method = f"{self.ns}_sign"
         _, error = Utils.call_ws(self.endpoint, method, [], self.log_path)
@@ -337,6 +365,7 @@ class TestKaiaNamespaceAccountWS(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getAccount_error_wrong_type_param2"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getAccount_error_wrong_value_param1"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getAccount_success"))
+        suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getAccount_success_eoa_with_code"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getAccountKey_error_no_param"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getAccountKey_error_wrong_type_param1"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getAccountKey_error_wrong_type_param2"))
@@ -357,6 +386,7 @@ class TestKaiaNamespaceAccountWS(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_isContractAccount_error_wrong_value_param"))
 
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_isContractAccount_success"))
+        suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_isContractAccount_success_eoa_with_code"))
 
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getTransactionCount_error_no_param"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getTransactionCount_error_wrong_type_param1"))
@@ -369,6 +399,7 @@ class TestKaiaNamespaceAccountWS(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getCode_error_wrong_type_param2"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getCode_error_wrong_value_param"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getCode_success"))
+        suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_getCode_success_eoa_with_code"))
 
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_sign_error_no_param"))
         suite.addTest(TestKaiaNamespaceAccountWS("test_kaia_sign_error_wrong_type_param1"))

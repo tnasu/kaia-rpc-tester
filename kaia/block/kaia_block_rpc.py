@@ -83,6 +83,15 @@ class TestKaiaNamespaceBlockRPC(unittest.TestCase):
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_kaia_getStorageAt_success_eoa_with_code(self):
+        method = f"{self.ns}_getStorageAt"
+        eoaWithCode = test_data_set["account"]["eoaWithCode"]["address"]
+        position = "0x0"
+        tag = "latest"
+        params = [eoaWithCode, position, tag]
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
     def test_kaia_getBlockTransactionCountByHash_error_no_param(self):
         txFrom = test_data_set["account"]["sender"]["address"]
         txTo = test_data_set["account"]["receiver"]["address"]
@@ -656,6 +665,7 @@ class TestKaiaNamespaceBlockRPC(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceBlockRPC("test_kaia_getStorageAt_success_wrong_value_param"))
 
         suite.addTest(TestKaiaNamespaceBlockRPC("test_kaia_getStorageAt_success"))
+        suite.addTest(TestKaiaNamespaceBlockRPC("test_kaia_getStorageAt_success_eoa_with_code"))
 
         suite.addTest(TestKaiaNamespaceBlockRPC("test_kaia_getBlockTransactionCountByHash_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockRPC("test_kaia_getBlockTransactionCountByHash_error_wrong_type_param"))
