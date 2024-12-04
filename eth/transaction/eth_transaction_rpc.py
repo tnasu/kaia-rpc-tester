@@ -1371,6 +1371,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
             self.assertIsNone(error)
             self.assertIsNotNone(result)
             eth_common.checkGasPriceField(self, result)
+            eth_common.checkAuthorizationListField(self, result)
 
     def test_eth_fillTransaction_error_no_param(self):
         method = f"{self.ns}_fillTransaction"

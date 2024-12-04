@@ -159,6 +159,18 @@ class TestEthNamespaceAccountWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_eth_getCode_success_eoa_with_code(self):
+        block_number = eth_common.get_block_number(self.endpoint)
+        self.assertIsNotNone(block_number)
+
+        method = f"{self.ns}_getCode"
+        tag = "latest"
+        eoaWithCodeAddress = test_data_set["account"]["eoaWithCode"]["address"]
+        params = [eoaWithCodeAddress, tag]
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(result, "0xef0100000000000000000000000000000000000000aaaa") # Expected value for delegation
+
     def test_eth_getCode_error_no_param(self):
         method = f"{self.ns}_getCode"
         _, error = Utils.call_ws(self.endpoint, method, [], self.log_path)
@@ -186,17 +198,6 @@ class TestEthNamespaceAccountWS(unittest.TestCase):
         params = [contractAddress, "0xffffffff"]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "HeaderNotExist", error)
-
-    def test_eth_getCode_success(self):
-        block_number = eth_common.get_block_number(self.endpoint)
-        self.assertIsNotNone(block_number)
-
-        method = f"{self.ns}_getCode"
-        tag = "latest"
-        contractAddress = test_data_set["contracts"]["unknown"]["address"][0]
-        params = [contractAddress, tag]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        self.assertIsNone(error)
 
     def test_eth_sign_error_no_param(self):
         method = f"{self.ns}_sign"
@@ -266,6 +267,7 @@ class TestEthNamespaceAccountWS(unittest.TestCase):
         suite.addTest(TestEthNamespaceAccountWS("test_eth_getCode_error_wrong_type_param2"))
         suite.addTest(TestEthNamespaceAccountWS("test_eth_getCode_error_wrong_value_param"))
         suite.addTest(TestEthNamespaceAccountWS("test_eth_getCode_success"))
+        suite.addTest(TestEthNamespaceAccountWS("test_eth_getCode_success_eoa_with_code"))
 
         suite.addTest(TestEthNamespaceAccountWS("test_eth_sign_error_no_param"))
         suite.addTest(TestEthNamespaceAccountWS("test_eth_sign_error_wrong_type_param1"))

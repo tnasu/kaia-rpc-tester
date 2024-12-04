@@ -9,5 +9,8 @@
     "feePayerPrivateKey": "752a08fd165dcc7f37f3e444cf485c5b2020e4096a2cfd02f823a8b8280baaab",
     "feePayerAddress": "0xf77e71cf745e14129a344bcfb7e28240a5351beb",
     "feePayerPassword": "2523",
+    "eoaWithCodePrivateKey": "b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291",
+    "eoaWithCodeAddress": "0x71562b71999873DB5b286dF957af199Ec94617F7",
+    "eoaWithCodePassword": "2523",
     "namespaces": "admin,debug,eth,governance,kaia,net,personal,txpool"
 }

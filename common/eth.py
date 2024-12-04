@@ -50,9 +50,13 @@ def checkBaseFeePerGasFieldAndValue(self, result, value=""):
 
 def checkGasPriceField(self, result):
     self.assertIsNotNone(result["gasPrice"])
-    if result["type"] == "0x2":  # TxTypeEthereumDynamicFee
+    if result["type"] == "0x2" or result["type"] == "0x4":  # TxTypeEthereumDynamicFee, TxTypeEthereumSetCode
         self.assertIsNotNone(result["maxFeePerGas"])
         self.assertIsNotNone(result["maxPriorityFeePerGas"])
+
+def checkAuthorizationListField(self, result):
+    if result["type"] == "0x4":  # TxTypeEthereumSetCode
+        self.assertIsNotNone(result["authorizationList"])
 
 
 def checkEthereumBlockOrHeaderFormat(self, actualReturn):

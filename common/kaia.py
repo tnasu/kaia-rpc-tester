@@ -48,6 +48,18 @@ def checkBaseFeePerGasFieldAndValue(self, result, value=""):
 
 def checkGasPriceField(self, result):
     self.assertIsNotNone(result["gasPrice"])
-    if result["typeInt"] == 30722:  # TxTypeEthereumDynamicFee
+    if result["typeInt"] == 30722 or result["typeInt"] == 30724:  # TxTypeEthereumDynamicFee, TxTypeEthereumSetCode
         self.assertIsNotNone(result["maxFeePerGas"])
         self.assertIsNotNone(result["maxPriorityFeePerGas"])
+
+def checkAuthorizationListField(self, result):
+    if result["typeInt"] == 30724:  # TxTypeEthereumSetCode
+        self.assertIsNotNone(result["authorizationList"])
+
+# In KIP228, EOA now returns storageRoot, codeHash, codeFormat, and vmVersion when gettingAccount.
+# This function checks to make sure they are not None.
+def checkIfEoaFollowKIP228(self, result):
+    self.assertIsNotNone(result["account"]["storageRoot"])
+    self.assertIsNotNone(result["account"]["codeHash"])
+    self.assertIsNotNone(result["account"]["codeFormat"])
+    self.assertIsNotNone(result["account"]["vmVersion"])

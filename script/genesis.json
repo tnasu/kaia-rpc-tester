@@ -9,6 +9,7 @@
         "shanghaiCompatibleBlock": 0,
         "cancunCompatibleBlock": 0,
         "kaiaCompatibleBlock": 0,
+        "PragueCompatibleBlock": 0,
         "istanbul": {
             "epoch": 30,
             "policy": 2,

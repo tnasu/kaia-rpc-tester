@@ -201,6 +201,11 @@ def load_test_data():
                 "password": "",
                 "privateKey": ""
             },
+            "eoaWithCode": {
+                "address": "",
+                "password": "",
+                "privateKey": ""
+            },
             "receiver": {
                 "address": ""
             },
@@ -250,6 +255,11 @@ def load_test_data():
     test_data_set["account"]["feePayer"]["privateKey"] = "0x" + config.get(
         "feePayerPrivateKey", config["faucetPrivateKey"]
     )
+    # Set a eoa with code account. If config.json does not have eoa with code fields.
+    test_data_set["account"]["eoaWithCode"]["address"] = config["eoaWithCodeAddress"]
+    test_data_set["account"]["eoaWithCode"]["password"] = config.get("eoaWithCodePassword", "")
+    test_data_set["account"]["eoaWithCode"]["privateKey"] = "0x" + config["eoaWithCodePrivateKey"]
+
     test_data_set["account"]["receiver"]["address"] = "0x44711E89b0c23845b5B2ed9D3716BA42b8a3e075"
     # 1pebHolder is for estimateGas test case
     test_data_set["account"]["1pebHolder"]["address"] = "0x1111111111111111111111111111111111111111"
@@ -585,6 +595,38 @@ def makeTxData():
                             "0x0000000000000000000000000000000000000000000000000000000000000003",
                             "0x0000000000000000000000000000000000000000000000000000000000000007",
                         ],
+                    },
+                ],
+            },
+            "result": {"hash": "", "blockHash": "", "blockNumber": "", "index": ""},
+        },
+        {
+            "type": "TxTypeEthereumSetCode",
+            "tx": {
+                "typeInt": 30724,
+                "from": txFrom,
+                "to": txTo,
+                "gas": txGas,
+                "value": txValueOne,
+                "maxFeePerGas": txGasPrice,
+                "maxPriorityFeePerGas": txGasPrice,
+                "accessList": [
+                    {
+                        "address": txFrom,
+                        "storageKeys": [
+                            "0x0000000000000000000000000000000000000000000000000000000000000003",
+                            "0x0000000000000000000000000000000000000000000000000000000000000007",
+                        ],
+                    },
+                ],
+                "authorizationList": [
+                    {
+                        "chainId": 0,
+                        "address": "0x000000000000000000000000000000000000aaaa",
+                        "nonce": 0,
+                        "v": 1,
+                        "r": 55144875988926014738870656626934434281670683479556129705566969239499500405613,
+                        "s": 4032130475923093691813804301715070220966601149606639374958929222597817220402,
                     },
                 ],
             },
