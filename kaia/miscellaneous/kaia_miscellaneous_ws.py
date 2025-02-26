@@ -99,6 +99,10 @@ class TestKaiaNamespaceMiscellaneousWS(unittest.TestCase):
         params = [txRawData, "latest"]
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        params = [txRawData, "pending"] # = latest
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
 
     def test_kaia_recoverFromMessage_error_no_param(self):
         method = f"{self.ns}_recoverFromMessage"
