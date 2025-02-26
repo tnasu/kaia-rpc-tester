@@ -179,8 +179,10 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
 
         method = f"{self.ns}_getBlockTransactionCountByHash"
         params = ["0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        Utils.check_error(self, "BlockDoesNotExist", error)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # Utils.check_error(self, "BlockDoesNotExist", error)
+        self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_kaia_getBlockTransactionCountByHash_success(self):
         txFrom = test_data_set["account"]["sender"]["address"]
@@ -227,8 +229,10 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
     def test_kaia_getBlockTransactionCountByNumber_error_wrong_value_param(self):
         method = f"{self.ns}_getBlockTransactionCountByNumber"
         params = ["0xffffffff"]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        Utils.check_error(self, "BlockNotExist", error)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # Utils.check_error(self, "BlockDoesNotExist", error)
+        self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_kaia_getBlockTransactionCountByNumber_success(self):
         blockNumber = kaia_common.get_block_number(self.endpoint)

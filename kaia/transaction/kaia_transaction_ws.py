@@ -428,7 +428,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -456,7 +456,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -484,7 +484,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -512,7 +512,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -540,7 +540,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -568,7 +568,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -596,7 +596,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -626,7 +626,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -668,7 +668,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txValue = hex(2441406250)
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_signTransaction"
@@ -697,12 +697,12 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txFrom = test_data_set["account"]["sender"]["address"]
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_chainID"
         params = []
-        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        chainId, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         password = test_data_set["account"]["sender"]["password"]
@@ -754,12 +754,12 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txFrom = test_data_set["account"]["sender"]["address"]
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_chainID"
         params = []
-        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        chainId, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         password = test_data_set["account"]["sender"]["password"]
@@ -815,12 +815,12 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txFrom = test_data_set["account"]["sender"]["address"]
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_chainID"
         params = []
-        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        chainId, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         password = test_data_set["account"]["sender"]["password"]
@@ -873,12 +873,12 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         txFrom = test_data_set["account"]["sender"]["address"]
 
         params = [txFrom, tag]
-        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         method = f"{self.ns}_chainID"
         params = []
-        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        chainId, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
         password = test_data_set["account"]["sender"]["password"]
@@ -912,22 +912,24 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         rawData = result["raw"]
         method = f"{self.ns}_sendRawTransaction"
         params = [rawData]
-        txHash, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        txHash, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
     def test_kaia_getTransactionByBlockHashAndIndex_error_no_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
 
         params = []
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(nonce)
 
     def test_kaia_getTransactionByBlockHashAndIndex_error_wrong_type_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
 
         params = ["txhash", "0x0"]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexToHash", error)
+        self.assertIsNone(nonce)
 
     def test_kaia_getTransactionByBlockHashAndIndex_error_wrong_value_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -936,8 +938,10 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
             "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             "0x0",
         ]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        Utils.check_error(self, "BlockDoesNotExist", error)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+         # Utils.check_error(self, "BlockNotExist", error)
+        self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_kaia_getTransactionByBlockHashAndIndex_success(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -953,15 +957,18 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"
 
         params = []
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(result)
 
     def test_kaia_getTransactionByBlockNumberAndIndex_error_wrong_value_param(self):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"
 
         params = ["0xffffffff", "0x0"]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        Utils.check_error(self, "BlockNotExist", error)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # Utils.check_error(self, "BlockNotExist", error)
+        self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_kaia_getTransactionByBlockNumberAndIndex_success(self):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"

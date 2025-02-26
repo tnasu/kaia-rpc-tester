@@ -184,7 +184,9 @@ class TestEthNamespaceBlockWS(unittest.TestCase):
         method = f"{self.ns}_getBlockTransactionCountByHash"
         params = ["0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"]
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # Utils.check_error(self, "BlockDoesNotExist", error)
         self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_eth_getBlockTransactionCountByHash_success(self):
         txFrom = test_data_set["account"]["sender"]["address"]
@@ -232,7 +234,9 @@ class TestEthNamespaceBlockWS(unittest.TestCase):
         method = f"{self.ns}_getBlockTransactionCountByNumber"
         params = ["0xffffffff"]
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # Utils.check_error(self, "BlockDoesNotExist", error)
         self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_eth_getBlockTransactionCountByNumber_success(self):
         blockNumber = eth_common.get_block_number(self.endpoint)
