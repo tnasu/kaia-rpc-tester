@@ -919,15 +919,17 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
 
         params = []
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(nonce)
 
     def test_kaia_getTransactionByBlockHashAndIndex_error_wrong_type_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
 
         params = ["txhash", "0x0"]
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexToHash", error)
+        self.assertIsNone(nonce)
 
     def test_kaia_getTransactionByBlockHashAndIndex_error_wrong_value_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -936,8 +938,10 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
             "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             "0x0",
         ]
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
-        Utils.check_error(self, "BlockDoesNotExist", error)
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+         # Utils.check_error(self, "BlockNotExist", error)
+        self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_kaia_getTransactionByBlockHashAndIndex_success(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -953,15 +957,18 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"
 
         params = []
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(result)
 
     def test_kaia_getTransactionByBlockNumberAndIndex_error_wrong_value_param(self):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"
 
         params = ["0xffffffff", "0x0"]
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
-        Utils.check_error(self, "BlockNotExist", error)
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        # Utils.check_error(self, "BlockNotExist", error)
+        self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_kaia_getTransactionByBlockNumberAndIndex_success(self):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"

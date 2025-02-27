@@ -120,7 +120,8 @@ errors_json = """
     "ExistingFile": [-32000 ,"location would overwrite an existing file"],
     "GasNotSpecified": [-32000, "gas not specified"],
     "UndefinedTxType": [-32000, "undefined tx type"],
-    "RlpExceed": [-32000, "rlp: value size exceeds available input length"]
+    "RlpExceed": [-32000, "rlp: value size exceeds available input length"],
+    "PendingLogsNotSupported": [-32000, "pending logs are not supported"]
 
 }
 """

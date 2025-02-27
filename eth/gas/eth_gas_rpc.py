@@ -32,6 +32,13 @@ class TestEthNamespaceGasRPC(unittest.TestCase):
         self.assertLessEqual(length, blockCount)
         self.assertEqual(length, len(result["gasUsedRatio"]))
         self.assertEqual(length + 1, len(result["baseFeePerGas"]))
+        lastBlock = "pending" # = latest since no pending block
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        length = len(result["reward"])
+        self.assertLessEqual(length, blockCount)
+        self.assertEqual(length, len(result["gasUsedRatio"]))
+        self.assertEqual(length + 1, len(result["baseFeePerGas"]))
 
     @staticmethod
     def suite():

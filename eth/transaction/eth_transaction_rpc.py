@@ -783,6 +783,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         params = []
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(nonce)
 
     def test_eth_getTransactionByBlockHashAndIndex_error_wrong_type_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -790,6 +791,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         params = ["txhash", "0x0"]
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexToHash", error)
+        self.assertIsNone(nonce)
 
     def test_eth_getTransactionByBlockHashAndIndex_error_wrong_value_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -799,7 +801,9 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
             "0x0",
         ]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        # Utils.check_error(self, "BlockNotExist", error)
         self.assertIsNone(result)
+        self.assertIsNone(error)
 
     def test_eth_getTransactionByBlockHashAndIndex_success(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -813,8 +817,9 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"
 
         params = []
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(result)
 
     def test_eth_getTransactionByBlockNumberAndIndex_error_wrong_value_param(self):
         method = f"{self.ns}_getTransactionByBlockNumberAndIndex"
