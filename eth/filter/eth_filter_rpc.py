@@ -322,19 +322,17 @@ class TestEthNamespaceFilterRPC(unittest.TestCase):
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-    def test_eth_subscribe_success(self):
+    def test_eth_subscribe_newHeads_error_unsupported_rpc(self):
         method = f"{self.ns}_subscribe"
-        fromBlock = "latest"
         params = ["newHeads"]
-        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
-        self.assertIsNone(error)
-        subId = result
-        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "NotificationsNotSupported", error)
 
-        method = f"{self.ns}_unsubscribe"
-        params = [subId]
-        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
-        self.assertIsNone(error)
+    def test_eth_subscribe_logs_error_unsupported_rpc(self):
+        method = f"{self.ns}_subscribe"
+        params = ["logs"]
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "NotificationsNotSupported", error)
 
     @staticmethod
     def suite():
@@ -364,7 +362,6 @@ class TestEthNamespaceFilterRPC(unittest.TestCase):
         suite.addTest(TestEthNamespaceFilterRPC("test_eth_getLogs_error_unsupported_block_tag_param"))
         suite.addTest(TestEthNamespaceFilterRPC("test_eth_getLogs_success_wrong_value_param"))
         suite.addTest(TestEthNamespaceFilterRPC("test_eth_getLogs_success"))
-        """
-        suite.addTest(TestEthNamespaceFilterRPC("test_eth_subscribe_success"))
-        """
+        suite.addTest(TestEthNamespaceFilterRPC("test_eth_subscribe_newHeads_error_unsupported_rpc"))
+        suite.addTest(TestEthNamespaceFilterRPC("test_eth_subscribe_logs_error_unsupported_rpc"))
         return suite

@@ -121,7 +121,9 @@ errors_json = """
     "GasNotSpecified": [-32000, "gas not specified"],
     "UndefinedTxType": [-32000, "undefined tx type"],
     "RlpExceed": [-32000, "rlp: value size exceeds available input length"],
-    "PendingLogsNotSupported": [-32000, "pending logs are not supported"]
+    "PendingLogsNotSupported": [-32000, "pending logs are not supported"],
+    "NotificationsNotSupported": [-32000, "notifications not supported"],
+    "InvalidSubscriptionName": [-32602, "expected subscription name as first argument"]
 
 }
 """

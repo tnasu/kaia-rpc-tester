@@ -201,6 +201,37 @@ class Utils(unittest.TestCase):
         return result, error
 
     @staticmethod
+    def open_ws(endpoint, method, params, log_file, save_result=False, port=8552):
+        host = f"ws://{endpoint}:{port}"
+        if params == None:
+            params = []
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params,
+            "id": Utils.get_request_id(),
+        }
+
+        ws = create_connection(host)
+        ws.send(json.dumps(payload))
+        response = ws.recv()
+
+        response_json = json.loads(response)
+        result = response_json.get("result")
+        error = response_json.get("error")
+
+        Utils.write_log(
+            log_file,
+            method,
+            host,
+            payload,
+            response,
+            save_file=save_result,
+            service="ws",
+        )
+        return result, error, ws
+
+    @staticmethod
     def get_console_result_with_index(screenshot, command, log_file, save_result=False, columns=0):
         kaia_list, command_index = Utils.parse_command(screenshot, command, columns)
 
@@ -367,3 +398,16 @@ class Utils(unittest.TestCase):
         expected_error_code, expected_error_message = ERRORS[expected_error_key]
         target_instance.assertEqual(expected_error_code, error.get("code"), error)
         target_instance.assertIn(expected_error_message, error.get("message"), error)
+
+    @staticmethod
+    def check_response_type_newHeads_subscription(target_instance, response):
+        """
+        Check whether given response is expected response or not.
+        target_instance must inherit unittest.TestCase class.
+        """
+        response_json = json.loads(response)
+        params = response_json.get('params')
+        target_instance.assertIsNotNone(params)
+        target_instance.assertIsNotNone(params.get('subscription'))
+        result = params.get('result')
+        target_instance.assertIsNotNone(result.get('number'))
