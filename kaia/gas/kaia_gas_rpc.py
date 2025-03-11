@@ -32,13 +32,21 @@ class TestKaiaNamespaceGasRPC(unittest.TestCase):
         self.assertLessEqual(length, blockCount)
         self.assertEqual(length, len(result["gasUsedRatio"]))
         self.assertEqual(length + 1, len(result["baseFeePerGas"]))
-        lastBlock = "pending" # = latest since no pending block
-        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+
+        lastBlock = "pending"
+        params = [blockCount, lastBlock, rewardPercentiles]
+        result2, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
-        length = len(result["reward"])
+        length = len(result2["reward"])
         self.assertLessEqual(length, blockCount)
-        self.assertEqual(length, len(result["gasUsedRatio"]))
-        self.assertEqual(length + 1, len(result["baseFeePerGas"]))
+        self.assertEqual(length, len(result2["gasUsedRatio"]))
+        self.assertEqual(length + 1, len(result2["baseFeePerGas"]))
+
+        # NOTE: Making the difference between latest and pending Receipts is hard, so we check the gap between the two oldest block
+        # on CN, the both oldest block gap is expected to be 1
+        # (on EN, the oldest block is expected to be the same)
+        # But there is a timing issue on CN if the block is finalized between the two testing API calls, so we allow 2
+        self.assertLessEqual(int(result2.get("oldestBlock"), 16) - int(result.get("oldestBlock"), 16), 2)
 
     @staticmethod
     def suite():
