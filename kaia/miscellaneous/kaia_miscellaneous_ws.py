@@ -98,10 +98,14 @@ class TestKaiaNamespaceMiscellaneousWS(unittest.TestCase):
         txRawData = "0x08f88302850ba43b74008366926694000000000000000000000000000000000000dead843b9aca0094a2a8854b1802d8cd5de631e690817c253d6a9153f847f845820feaa07bbc8b9f248a4ad18e7059833f8e79b468f6323853880551b0867956d26a32e4a017784ff7c75de110316f44c8b60315b9d1b45e8954703c29f3a667e50a01f0f9"
         params = [txRawData, "latest"]
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+
         self.assertIsNone(error)
         params = [txRawData, "pending"] # = latest
-        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        result2, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+
+        # MEMO: The sender address can be restored from the specified tx using either state, latest/pending, and will be the same.
+        self.assertEqual(result, result2)
 
 
     def test_kaia_recoverFromMessage_error_no_param(self):
