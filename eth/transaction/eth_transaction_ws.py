@@ -1499,10 +1499,10 @@ class TestEthNamespaceTransactionWS(unittest.TestCase):
         )
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionByBlockNumberAndIndex_success"))
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getRawTransactionByBlockNumberAndIndex_error_no_param"))
-        suite.addTest(
-            TestEthNamespaceTransactionWS("test_eth_getRawTransactionByBlockNumberAndIndex_error_wrong_value_param")
-        )
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getRawTransactionByBlockNumberAndIndex_success"))
+        suite.addTest(
+            TestEthNamespaceTransactionWS("test_eth_getRawTransactionByBlockNumberAndIndex_success_empty_slice_result")
+        )
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionReceipt_error_no_param"))
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionReceipt_error_wrong_type_param"))
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionReceipt_success_wrong_value_param"))

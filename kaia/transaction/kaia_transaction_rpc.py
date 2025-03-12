@@ -1711,10 +1711,10 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         )
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionByBlockNumberAndIndex_success"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getRawTransactionByBlockNumberAndIndex_error_no_param"))
-        suite.addTest(
-            TestKaiaNamespaceTransactionRPC("test_kaia_getRawTransactionByBlockNumberAndIndex_error_wrong_value_param")
-        )
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getRawTransactionByBlockNumberAndIndex_success"))
+        suite.addTest(
+            TestKaiaNamespaceTransactionRPC("test_kaia_getRawTransactionByBlockNumberAndIndex_success_empty_slice_result")
+        )
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionReceipt_error_no_param"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionReceipt_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionReceipt_success_wrong_value_param"))
