@@ -27,11 +27,14 @@ class TestKaiaNamespaceFilterWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexWithoutPrefix", error)
 
-    def test_kaia_newFilter_error_unsupported_block_tag_param(self):
+    def test_kaia_newFilter_error_unsupported_fromBlock_tag_param(self):
         method = f"{self.ns}_newFilter"
         params = [{"fromBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
+
+    def test_kaia_newFilter_error_unsupported_toBlock_tag_param(self):
+        method = f"{self.ns}_newFilter"
         params = [{"toBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
@@ -302,11 +305,14 @@ class TestKaiaNamespaceFilterWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexWithoutPrefix", error)
 
-    def test_kaia_getLogs_error_unsupported_block_tag_param(self):
+    def test_kaia_getLogs_error_unsupported_fromBlock_tag_param(self):
         method = f"{self.ns}_getLogs"
         params = [{"fromBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
+
+    def test_kaia_getLogs_error_unsupported_toBlock_tag_param(self):
+        method = f"{self.ns}_getLogs"
         params = [{"toBLock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
@@ -365,15 +371,15 @@ class TestKaiaNamespaceFilterWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg1HexWithoutPrefix", error)
 
-    def test_kaia_subscribe_logs_error_unsupported_block_tag_param(self):
+    def test_kaia_subscribe_logs_error_unsupported_fromBlock_tag_param(self):
         method = f"{self.ns}_subscribe"
-        fromBlock = "pending"
-        params = ["logs", {"fromBlock": fromBlock}]
+        params = ["logs", {"fromBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
 
-        toBlock = "pending"
-        params = ["logs", {"toBlock": toBlock}]
+    def test_kaia_subscribe_logs_error_unsupported_toBlock_tag_param(self):
+        method = f"{self.ns}_subscribe"
+        params = ["logs", {"toBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
 
@@ -395,7 +401,8 @@ class TestKaiaNamespaceFilterWS(unittest.TestCase):
         suite = unittest.TestSuite()
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newFilter_error_no_param"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newFilter_error_wrong_type_param"))
-        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newFilter_error_unsupported_block_tag_param"))
+        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newFilter_error_unsupported_fromBlock_tag_param"))
+        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newFilter_error_unsupported_toBlock_tag_param"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newFilter_success"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newBlockFilter_success_wrong_value_param"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_newBlockFilter_success"))
@@ -415,13 +422,15 @@ class TestKaiaNamespaceFilterWS(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getFilterLogs_success"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getLogs_error_no_param"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getLogs_error_wrong_type_param"))
-        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getLogs_error_unsupported_block_tag_param"))
+        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getLogs_error_unsupported_fromBlock_tag_param"))
+        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getLogs_error_unsupported_toBlock_tag_param"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getLogs_success_wrong_value_param"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_getLogs_success"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_error_wrong_subscription_name"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_newHeads_success"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_newHeads_success_and_recieved_data"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_logs_error_wrong_type_param"))
-        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_logs_error_unsupported_block_tag_param"))
+        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_logs_error_unsupported_fromBlock_tag_param"))
+        suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_logs_error_unsupported_toBlock_tag_param"))
         suite.addTest(TestKaiaNamespaceFilterWS("test_kaia_subscribe_logs_success"))
         return suite
