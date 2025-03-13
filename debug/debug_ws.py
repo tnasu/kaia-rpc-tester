@@ -692,7 +692,7 @@ class TestDebugNamespaceWS(unittest.TestCase):
         # To test TC successfully, start cpu profile.
         method = f"{self.ns}_startCPUProfile"
         profile_file = "start_cpu_30s_created_by_ws.profile"
-        Utils.call_rpc(self.endpoint, method, [profile_file], self.log_path)
+        Utils.call_ws(self.endpoint, method, [profile_file], self.log_path)
 
         method = f"{self.ns}_stopCPUProfile"
         _, error = Utils.call_ws(self.endpoint, method, [], self.log_path)
