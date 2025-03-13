@@ -315,7 +315,7 @@ class TestKaiaNamespaceBlockRPC(unittest.TestCase):
         method = f"{self.ns}_getBlockByNumber"
         num = "latest"
         params = []
-        _, error = kaia_common.send_transaction(self.endpoint, params)
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
 
     def test_kaia_getBlockByNumber_error_wrong_type_param1(self):
@@ -437,7 +437,7 @@ class TestKaiaNamespaceBlockRPC(unittest.TestCase):
         method = f"{self.ns}_getHeaderByNumber"
         num = "latest"
         params = []
-        _, error = kaia_common.send_transaction(self.endpoint, params)
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
 
     def test_kaia_getHeaderByNumber_error_wrong_type_param1(self):
