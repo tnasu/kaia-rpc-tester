@@ -839,6 +839,33 @@ class TestEthNamespaceTransactionWS(unittest.TestCase):
             _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
             self.assertIsNone(error)
 
+    def test_eth_getRawTransactionByBlockNumberAndIndex_error_no_param(self):
+        method = f"{self.ns}_getRawTransactionByBlockNumberAndIndex"
+
+        params = []
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(result)
+
+    def test_eth_getRawTransactionByBlockNumberAndIndex_success(self):
+        method = f"{self.ns}_getRawTransactionByBlockNumberAndIndex"
+
+        txData = test_data_set["txData"]
+        for tx in txData:
+            params = [tx["result"]["blockNumber"], tx["result"]["index"]]
+            _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+            self.assertIsNone(error)
+
+    def test_eth_getRawTransactionByBlockNumberAndIndex_success_empty_slice_result(self):
+        method = f"{self.ns}_getRawTransactionByBlockNumberAndIndex"
+
+        params = ["0xffffffff", "0x0"]
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # The empty slice marshals as "0x" and no error even if the transaction does not exist
+        # https://github.com/kaiachain/kaia/blob/91b2f0bbfbfbd63732f54dc66944ef099a5ea10c/common/hexutil/json.go#L44-L54
+        self.assertEqual(result, "0x")
+        self.assertIsNone(error)
+
     def test_eth_getTransactionReceipt_error_no_param(self):
         method = f"{self.ns}_getTransactionReceipt"
         params = []
@@ -1471,6 +1498,11 @@ class TestEthNamespaceTransactionWS(unittest.TestCase):
             TestEthNamespaceTransactionWS("test_eth_getTransactionByBlockNumberAndIndex_error_wrong_value_param")
         )
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionByBlockNumberAndIndex_success"))
+        suite.addTest(TestEthNamespaceTransactionWS("test_eth_getRawTransactionByBlockNumberAndIndex_error_no_param"))
+        suite.addTest(TestEthNamespaceTransactionWS("test_eth_getRawTransactionByBlockNumberAndIndex_success"))
+        suite.addTest(
+            TestEthNamespaceTransactionWS("test_eth_getRawTransactionByBlockNumberAndIndex_success_empty_slice_result")
+        )
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionReceipt_error_no_param"))
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionReceipt_error_wrong_type_param"))
         suite.addTest(TestEthNamespaceTransactionWS("test_eth_getTransactionReceipt_success_wrong_value_param"))

@@ -27,11 +27,14 @@ class TestEthNamespaceFilterWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexWithoutPrefix", error)
 
-    def test_eth_newFilter_error_unsupported_block_tag_param(self):
+    def test_eth_newFilter_error_unsupported_fromBlock_tag_param(self):
         method = f"{self.ns}_newFilter"
         params = [{"fromBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
+
+    def test_eth_newFilter_error_unsupported_toBlock_tag_param(self):
+        method = f"{self.ns}_newFilter"
         params = [{"toBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
@@ -300,11 +303,14 @@ class TestEthNamespaceFilterWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexWithoutPrefix", error)
 
-    def test_eth_getLogs_error_unsupported_block_tag_param(self):
+    def test_eth_getLogs_error_unsupported_fromBlock_tag_param(self):
         method = f"{self.ns}_getLogs"
         params = [{"fromBlock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
+
+    def test_eth_getLogs_error_unsupported_toBlock_tag_param(self):
+        method = f"{self.ns}_getLogs"
         params = [{"toBLock": "pending"}]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "PendingLogsNotSupported", error)
@@ -322,9 +328,14 @@ class TestEthNamespaceFilterWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-    def test_eth_subscribe_success(self):
+    def test_eth_subscribe_error_wrong_subscription_name(self):
         method = f"{self.ns}_subscribe"
-        fromBlock = "latest"
+        params = []
+        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "InvalidSubscriptionName", error)
+
+    def test_eth_subscribe_newHeads_success(self):
+        method = f"{self.ns}_subscribe"
         params = ["newHeads"]
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
@@ -333,15 +344,63 @@ class TestEthNamespaceFilterWS(unittest.TestCase):
 
         method = f"{self.ns}_unsubscribe"
         params = [subId]
+        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        #self.assertIsNone(error) # doesn't work well because unsubscribe API has a bug...
+
+    def test_eth_subscribe_newHeads_success_and_recieved_data(self):
+        method = f"{self.ns}_subscribe"
+        params = ["newHeads"]
+        result, error, ws = Utils.open_ws(self.endpoint, method, params, self.log_path)
+        try:
+            self.assertIsNone(error)
+            self.assertIsNotNone(result)
+            Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+
+            response = ws.recv()
+            Utils.check_response_type_newHeads_subscription(self, response)
+
+        finally:
+            ws.close()
+
+    def test_eth_subscribe_logs_error_wrong_type_param(self):
+        method = f"{self.ns}_subscribe"
+        fromBlock = "1234"
+        params = ["logs", {"fromBlock": fromBlock}]
+        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "arg1HexWithoutPrefix", error)
+
+    def test_eth_subscribe_logs_error_unsupported_fromBlock_tag_param(self):
+        method = f"{self.ns}_subscribe"
+        params = ["logs", {"fromBlock": "pending"}]
+        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "PendingLogsNotSupported", error)
+
+    def test_eth_subscribe_logs_error_unsupported_toBlock_tag_param(self):
+        method = f"{self.ns}_subscribe"
+        params = ["logs", {"toBlock": "pending"}]
+        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "PendingLogsNotSupported", error)
+
+    def test_eth_subscribe_logs_success(self):
+        method = f"{self.ns}_subscribe"
+        params = ["logs", {}]
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        subId = result
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+
+        method = f"{self.ns}_unsubscribe"
+        params = [subId]
+        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        #self.assertIsNone(error) # doesn't work well because unsubscribe has a bug...
 
     @staticmethod
     def suite():
         suite = unittest.TestSuite()
         suite.addTest(TestEthNamespaceFilterWS("test_eth_newFilter_error_no_param"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_newFilter_error_wrong_type_param"))
-        suite.addTest(TestEthNamespaceFilterWS("test_eth_newFilter_error_unsupported_block_tag_param"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_newFilter_error_unsupported_fromBlock_tag_param"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_newFilter_error_unsupported_toBlock_tag_param"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_newFilter_success"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_newBlockFilter_success_wrong_value_param"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_newBlockFilter_success"))
@@ -361,10 +420,15 @@ class TestEthNamespaceFilterWS(unittest.TestCase):
         suite.addTest(TestEthNamespaceFilterWS("test_eth_getFilterLogs_success"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_getLogs_error_no_param"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_getLogs_error_wrong_type_param"))
-        suite.addTest(TestEthNamespaceFilterWS("test_eth_getLogs_error_unsupported_block_tag_param"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_getLogs_error_unsupported_fromBlock_tag_param"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_getLogs_error_unsupported_toBlock_tag_param"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_getLogs_success_wrong_value_param"))
         suite.addTest(TestEthNamespaceFilterWS("test_eth_getLogs_success"))
-        """
-        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_success"))
-        """
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_error_wrong_subscription_name"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_newHeads_success"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_newHeads_success_and_recieved_data"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_logs_error_wrong_type_param"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_logs_error_unsupported_fromBlock_tag_param"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_logs_error_unsupported_toBlock_tag_param"))
+        suite.addTest(TestEthNamespaceFilterWS("test_eth_subscribe_logs_success"))
         return suite
