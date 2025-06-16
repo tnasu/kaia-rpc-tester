@@ -27,8 +27,9 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
 
     def test_eth_mining_success(self):
         method = f"{self.ns}_mining"
-        _, error = Utils.call_rpc(self.endpoint, method, [], self.log_path)
+        result, error = Utils.call_rpc(self.endpoint, method, [], self.log_path)
         self.assertIsNone(error)
+        self.assertFalse(result)
 
     def test_eth_blockNumber_success(self):
         method = f"{self.ns}_blockNumber"
@@ -44,7 +45,7 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
 
     def test_eth_getStorageAt_error_no_param(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
         params = []
@@ -53,48 +54,60 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
 
     def test_eth_getStorageAt_error_wrong_type_param1(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
-        params = ["contract", position, tag]
+        params = ["address", position, tag]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexToAddress", error)
 
     def test_eth_getStorageAt_error_wrong_type_param2(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
-        params = [contract, position, "0xffffffff"]
+        params = [address, position, "0xffffffff"]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "HeaderNotExist", error)
 
     def test_eth_getStorageAt_success_wrong_value_param(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
-        params = [contract, "position", tag]
+        params = [address, "position", tag]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
     def test_eth_getStorageAt_success(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["account"]["sender"]["address"]
         position = "0x0"
         tag = "latest"
-        params = [contract, position, tag]
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        params = [address, position, tag]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertEqual(result, "0x0000000000000000000000000000000000000000000000000000000000000000")
 
     def test_eth_getStorageAt_success_eoa_with_code(self):
         method = f"{self.ns}_getStorageAt"
-        eoaWithCode = test_data_set["account"]["eoaWithCode"]["address"]
+        address = test_data_set["account"]["eoaWithCode"]["address"]
         position = "0x0"
         tag = "latest"
-        params = [eoaWithCode, position, tag]
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        params = [address, position, tag]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertEqual(result, "0x0000000000000000000000000000000000000000000000000000000000000000")
+
+    def test_eth_getStorageAt_success_sca(self):
+        method = f"{self.ns}_getStorageAt"
+        address = test_data_set["contracts"]["unknown"]["address"][0]
+        position = "0x0"
+        tag = "latest"
+        params = [address, position, tag]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(result, "0x000000000000000000000000000000000000000000000000000000000000000f")
 
     def test_eth_getBlockTransactionCountByHash_error_no_param(self):
         txFrom = test_data_set["account"]["sender"]["address"]
@@ -234,7 +247,6 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         method = f"{self.ns}_getBlockTransactionCountByNumber"
         params = ["0xffffffff"]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
-        # Utils.check_error(self, "BlockDoesNotExist", error)
         self.assertIsNone(result)
         self.assertIsNone(error)
 
@@ -277,9 +289,10 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
             True,
         ]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         # Utils.check_error(self, "BlockDoesNotExist", error)
-        self.assertIsNone(result)
         self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_eth_getBlockByHash_success(self):
         method = f"{self.ns}_getBlockByNumber"
@@ -301,7 +314,7 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         method = f"{self.ns}_getBlockByNumber"
         num = "latest"
         params = []
-        _, error = eth_common.send_transaction(self.endpoint, params)
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
 
     def test_eth_getBlockByNumber_error_wrong_type_param1(self):
@@ -330,9 +343,10 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         num = "latest"
         params = ["0xffffffff", True]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         # Utils.check_error(self, "BlockNotExist", error)
-        self.assertIsNone(result)
         self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_eth_getBlockByNumber_success(self):
         method = f"{self.ns}_getBlockByNumber"
@@ -340,6 +354,7 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         params = [num, True]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        eth_common.checkBaseFeePerGasFieldAndValue(self, result)
         eth_common.checkEthereumBlockOrHeaderFormat(self, result)
 
     def test_eth_getBlockReceipts_error_no_param(self):
@@ -396,9 +411,10 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         method = f"{self.ns}_getHeaderByHash"
         params = ["0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         # Utils.check_error(self, "HeaderDoesNotExist", error)
-        self.assertIsNone(result)
         self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_eth_getHeaderByHash_success(self):
         method = f"{self.ns}_getHeaderByNumber"
@@ -406,19 +422,21 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         params = [num]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNotNone(result)
+        eth_common.checkBaseFeePerGasFieldAndValue(self, result)
         blockHash = result["hash"]
 
         method = f"{self.ns}_getHeaderByHash"
         params = [blockHash]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        eth_common.checkBaseFeePerGasFieldAndValue(self, result)
         eth_common.checkEthereumBlockOrHeaderFormat(self, result)
 
     def test_eth_getHeaderByNumber_error_no_param(self):
         method = f"{self.ns}_getHeaderByNumber"
         num = "latest"
         params = []
-        _, error = eth_common.send_transaction(self.endpoint, params)
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
 
     def test_eth_getHeaderByNumber_error_wrong_type_param1(self):
@@ -440,9 +458,10 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         num = "latest"
         params = ["0xffffffff"]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         # Utils.check_error(self, "HeaderDoesNotExist", error)
-        self.assertIsNone(result)
         self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_eth_getHeaderByNumber_success(self):
         method = f"{self.ns}_getHeaderByNumber"
@@ -450,6 +469,7 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         params = [num]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        eth_common.checkBaseFeePerGasFieldAndValue(self, result)
         eth_common.checkEthereumBlockOrHeaderFormat(self, result)
 
     def test_eth_getUncleByBlockNumberAndIndex_error_no_param(self):
@@ -513,47 +533,37 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
     @staticmethod
     def suite():
         suite = unittest.TestSuite()
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_syncing_success_wrong_value_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_syncing_success"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_mining_success"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_blockNumber_success"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_blockNumber_success_wrong_value_param"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getStorageAt_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getStorageAt_error_wrong_type_param1"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getStorageAt_error_wrong_type_param2"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getStorageAt_success_wrong_value_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getStorageAt_success"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getStorageAt_success_eoa_with_code"))
-
+        suite.addTest(TestEthNamespaceBlockRPC("test_eth_getStorageAt_success_sca"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByHash_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByHash_error_wrong_type_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByHash_error_wrong_value_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByHash_success"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByNumber_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByNumber_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByNumber_error_wrong_type_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByNumber_error_wrong_value_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockTransactionCountByNumber_success"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByHash_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByHash_error_wrong_type_param1"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByHash_error_wrong_type_param2"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByHash_error_wrong_value_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByHash_success"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByNumber_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByNumber_error_wrong_type_param1"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByNumber_error_wrong_type_param2"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByNumber_error_wrong_value_param1"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByNumber_error_wrong_value_param2"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockByNumber_success"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockReceipts_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getBlockReceipts_error_wrong_type_param"))
@@ -563,19 +573,15 @@ class TestEthNamespaceBlockRPC(unittest.TestCase):
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByHash_error_wrong_type_param1"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByHash_error_wrong_value_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByHash_success"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByNumber_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByNumber_error_wrong_type_param1"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByNumber_error_wrong_value_param1"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByNumber_error_wrong_value_param2"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getHeaderByNumber_success"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getUncleByBlockNumberAndIndex_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getUncleByBlockNumberAndIndex_success"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getUncleByBlockHashAndIndex_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getUncleByBlockHashAndIndex_success"))
-
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getUncleCountByBlockNumber_error_no_param"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getUncleCountByBlockNumber_success"))
         suite.addTest(TestEthNamespaceBlockRPC("test_eth_getUncleCountByBlockHash_error_no_param"))

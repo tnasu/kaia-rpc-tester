@@ -1,7 +1,12 @@
+from typing import Final
 from utils import Utils
 
 _, _, log_path = Utils.get_log_filename_with_path()
 
+EMPTY_STORAGE_ROOT: Final = "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421"
+EMPTY_CODE_HASH: Final = "xdJGAYb3IzySfn2y3McDwOUAtlPKgic7e/rYBF2FpHA="
+EMPTY_CODE_FORMAT: Final = 0
+EMPTY_VM_VERSION: Final = 0
 
 def send_transaction(endpoint, params):
     transaction_hash, error = Utils.call_rpc(endpoint, "kaia_sendTransaction", params, log_path)
@@ -56,10 +61,20 @@ def checkAuthorizationListField(self, result):
     if result["typeInt"] == 30724:  # TxTypeEthereumSetCode
         self.assertIsNotNone(result["authorizationList"])
 
-# In KIP228, EOA now returns storageRoot, codeHash, codeFormat, and vmVersion when gettingAccount.
-# This function checks to make sure they are not None.
-def checkIfEoaFollowKIP228(self, result):
-    self.assertIsNotNone(result["account"]["storageRoot"])
-    self.assertIsNotNone(result["account"]["codeHash"])
-    self.assertIsNotNone(result["account"]["codeFormat"])
-    self.assertIsNotNone(result["account"]["vmVersion"])
+# SCA has specific values of storageRoot, codeHash, codeFormat, and vmVersion when getting Account.
+# In KIP228, EOA with code also returns them. See https://kips.kaia.io/KIPs/kip-228
+# This function checks to ensure they are or are not.
+def checkIfAccountHasSpecificValues(self, result, isNotEqual=True):
+    if isNotEqual:
+        self.assertNotEqual(result["account"]["vmVersion"], EMPTY_VM_VERSION)
+        self.assertNotEqual(result["account"]["codeHash"], EMPTY_CODE_HASH)
+        self.assertEqual(result["account"]["codeFormat"], EMPTY_CODE_FORMAT) # The prepared test data is not updated
+        if result["accType"] == 1: # EOA (In this case, this is EOA with code)
+            self.assertEqual(result["account"]["storageRoot"], EMPTY_STORAGE_ROOT) # The prepared test data is not updated
+        elif result["accType"] == 2: # SCA
+            self.assertNotEqual(result["account"]["storageRoot"], EMPTY_STORAGE_ROOT)
+    else:
+        self.assertEqual(result["account"]["vmVersion"], EMPTY_VM_VERSION)
+        self.assertEqual(result["account"]["codeHash"], EMPTY_CODE_HASH)
+        self.assertEqual(result["account"]["codeFormat"], EMPTY_CODE_FORMAT)
+        self.assertEqual(result["account"]["storageRoot"], EMPTY_STORAGE_ROOT)

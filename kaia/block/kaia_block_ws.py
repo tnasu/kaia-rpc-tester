@@ -1,5 +1,4 @@
 import unittest
-from unittest import result
 from utils import Utils
 from common import kaia as kaia_common
 
@@ -40,7 +39,7 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
 
     def test_kaia_getStorageAt_error_no_param(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
         params = []
@@ -49,48 +48,60 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
 
     def test_kaia_getStorageAt_error_wrong_type_param1(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
-        params = ["contract", position, tag]
+        params = ["address", position, tag]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexToAddress", error)
 
     def test_kaia_getStorageAt_error_wrong_type_param2(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
-        params = [contract, position, "0xffffffff"]
+        params = [address, position, "0xffffffff"]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "HeaderNotExist", error)
 
     def test_kaia_getStorageAt_success_wrong_value_param(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["contracts"]["unknown"]["address"][0]
         position = "0x0"
         tag = "latest"
-        params = [contract, "position", tag]
+        params = [address, "position", tag]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
     def test_kaia_getStorageAt_success(self):
         method = f"{self.ns}_getStorageAt"
-        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        address = test_data_set["account"]["sender"]["address"]
         position = "0x0"
         tag = "latest"
-        params = [contract, position, tag]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        params = [address, position, tag]
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertEqual(result, "0x0000000000000000000000000000000000000000000000000000000000000000")
 
     def test_kaia_getStorageAt_success_eoa_with_code(self):
         method = f"{self.ns}_getStorageAt"
-        eoaWithCode = test_data_set["account"]["eoaWithCode"]["address"]
+        address = test_data_set["account"]["eoaWithCode"]["address"]
         position = "0x0"
         tag = "latest"
-        params = [eoaWithCode, position, tag]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        params = [address, position, tag]
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertEqual(result, "0x0000000000000000000000000000000000000000000000000000000000000000")
+
+    def test_kaia_getStorageAt_success_sca(self):
+        method = f"{self.ns}_getStorageAt"
+        address = test_data_set["contracts"]["unknown"]["address"][0]
+        position = "0x0"
+        tag = "latest"
+        params = [address, position, tag]
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(result, "0x000000000000000000000000000000000000000000000000000000000000000f")
 
     def test_kaia_getBlockTransactionCountByHash_error_no_param(self):
         txFrom = test_data_set["account"]["sender"]["address"]
@@ -230,7 +241,6 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
         method = f"{self.ns}_getBlockTransactionCountByNumber"
         params = ["0xffffffff"]
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        # Utils.check_error(self, "BlockDoesNotExist", error)
         self.assertIsNone(result)
         self.assertIsNone(error)
 
@@ -242,26 +252,12 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
         self.assertIsNone(error)
 
     def test_kaia_getBlockByHash_error_no_param(self):
-        method = f"{self.ns}_getBlockByNumber"
-        num = "latest"
-        params = [num, True]
-        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        self.assertIsNotNone(result)
-        blockHash = result["hash"]
-
         method = f"{self.ns}_getBlockByHash"
         params = []
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
 
     def test_kaia_getBlockByHash_error_wrong_type_param1(self):
-        method = f"{self.ns}_getBlockByNumber"
-        num = "latest"
-        params = [num, True]
-        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        self.assertIsNotNone(result)
-        blockHash = result["hash"]
-
         method = f"{self.ns}_getBlockByHash"
         params = [True, True]
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
@@ -281,20 +277,16 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
         Utils.check_error(self, "arg1StringToBool", error)
 
     def test_kaia_getBlockByHash_error_wrong_value_param(self):
-        method = f"{self.ns}_getBlockByNumber"
-        num = "latest"
-        params = [num, True]
-        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
-        self.assertIsNotNone(result)
-        blockHash = result["hash"]
-
         method = f"{self.ns}_getBlockByHash"
         params = [
             "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             True,
         ]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         Utils.check_error(self, "BlockDoesNotExist", error)
+        # self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_kaia_getBlockByHash_success(self):
         method = f"{self.ns}_getBlockByNumber"
@@ -343,8 +335,11 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
         method = f"{self.ns}_getBlockByNumber"
         num = "latest"
         params = ["0xffffffff", True]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         Utils.check_error(self, "BlockNotExist", error)
+        # self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_kaia_getBlockByNumber_success(self):
         method = f"{self.ns}_getBlockByNumber"
@@ -360,7 +355,6 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
         result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
         kaia_common.checkBaseFeePerGasFieldAndValue(self, result, "0x0")
-        # self.assertEqual(result["baseFeePerGas"], "0x0")
 
     def test_kaia_getBlockReceipts_error_no_param(self):
         method = f"{self.ns}_getBlockReceipts"
@@ -415,8 +409,11 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
     def test_kaia_getHeaderByHash_error_wrong_value_param(self):
         method = f"{self.ns}_getHeaderByHash"
         params = ["0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         Utils.check_error(self, "HeaderDoesNotExist", error)
+        # self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_kaia_getHeaderByHash_success(self):
         method = f"{self.ns}_getHeaderByNumber"
@@ -458,8 +455,11 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
         method = f"{self.ns}_getHeaderByNumber"
         num = "latest"
         params = ["0xffffffff"]
-        _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
+        # It's not same behavior between kaia and eth
         Utils.check_error(self, "HeaderDoesNotExist", error)
+        # self.assertIsNone(error)
+        self.assertIsNone(result)
 
     def test_kaia_getHeaderByNumber_success(self):
         method = f"{self.ns}_getHeaderByNumber"
@@ -656,40 +656,32 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
     @staticmethod
     def suite():
         suite = unittest.TestSuite()
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_syncing_success_wrong_value_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_syncing_success"))
-
+        # not implemented "mining"
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_blockNumber_success"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_blockNumber_success_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getStorageAt_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getStorageAt_error_wrong_type_param1"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getStorageAt_error_wrong_type_param2"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getStorageAt_success_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getStorageAt_success"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getStorageAt_success_eoa_with_code"))
-
+        suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getStorageAt_success_sca"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByHash_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByHash_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByHash_error_wrong_value_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByHash_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByNumber_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByNumber_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByNumber_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByNumber_error_wrong_value_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockTransactionCountByNumber_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByHash_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByHash_error_wrong_type_param1"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByHash_error_wrong_type_param2"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByHash_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByHash_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByNumber_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByNumber_error_wrong_type_param1"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockByNumber_error_wrong_type_param2"))
@@ -702,49 +694,37 @@ class TestKaiaNamespaceBlockWS(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockReceipts_success"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByHash_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByHash_error_wrong_type_param1"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByHash_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByHash_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByNumber_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByNumber_error_wrong_type_param1"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByNumber_error_wrong_value_param1"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByNumber_error_wrong_value_param2"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getHeaderByNumber_success"))
+        # not implemented "uncle"
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByHash_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByHash_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByHash_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByHash_success"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByNumber_error_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByNumber_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByNumber_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getBlockWithConsensusInfoByNumber_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommittee_success_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommittee_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommittee_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommittee_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommitteeSize_success_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommitteeSize_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommitteeSize_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCommitteeSize_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncil_success_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncil_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncil_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncil_success"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncilSize_success_no_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncilSize_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncilSize_error_wrong_value_param"))
-
         suite.addTest(TestKaiaNamespaceBlockWS("test_kaia_getCouncilSize_success"))
 
         return suite
