@@ -1487,6 +1487,19 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         _, error = Utils.call_ws(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_kaia_estimateGas_success_floor_data_gas(self):
+        method = f"{self.ns}_estimateGas"
+        address = test_data_set["account"]["sender"]["address"]
+        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        large_calldata = test_data_set["contracts"]["unknown"]["input"] + "ff" * 1000  # Function call + 1KB of data
+        params = [{"from": address, "to": contract, "data": large_calldata}]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertIsNotNone(result)
+        estimated_gas = int(result, 16)
+        expected_gas = 61510
+        self.assertEqual(estimated_gas, expected_gas)
+
     def test_kaia_estimateComputationCost_success(self):
         method = f"{self.ns}_estimateComputationCost"
         address = test_data_set["account"]["sender"]["address"]
@@ -1742,6 +1755,7 @@ class TestKaiaNamespaceTransactionWS(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceTransactionWS("test_kaia_estimateGas_error_evm_revert_message"))
         suite.addTest(TestKaiaNamespaceTransactionWS("test_kaia_estimateGas_success"))
         suite.addTest(TestKaiaNamespaceTransactionWS("test_kaia_estimateGas_success_data_instead_input"))
+        suite.addTest(TestKaiaNamespaceTransactionWS("test_kaia_estimateGas_success_floor_data_gas"))
         suite.addTest(TestKaiaNamespaceTransactionWS("test_kaia_estimateComputationCost_success"))
         suite.addTest(TestKaiaNamespaceTransactionWS("test_kaia_estimateComputationCost_success_input_instead_data"))
         suite.addTest(TestKaiaNamespaceTransactionWS("test_kaia_getTransactionByHash_error_no_param"))

@@ -1354,6 +1354,19 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_eth_estimateGas_success_floor_data_gas(self):
+        method = f"{self.ns}_estimateGas"
+        address = test_data_set["account"]["sender"]["address"]
+        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        large_calldata = test_data_set["contracts"]["unknown"]["input"] + "ff" * 1000  # Function call + 1KB of data
+        params = [{"from": address, "to": contract, "data": large_calldata}]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertIsNotNone(result)
+        estimated_gas = int(result, 16)
+        expected_gas = 61510
+        self.assertEqual(estimated_gas, expected_gas)
+
     def test_eth_estimateComputationCost_success(self):
         method = f"{self.ns}_estimateComputationCost"
         address = test_data_set["account"]["sender"]["address"]
@@ -1535,6 +1548,7 @@ class TestEthNamespaceTransactionRPC(unittest.TestCase):
         suite.addTest(TestEthNamespaceTransactionRPC("test_eth_estimateGas_error_evm_revert_message"))
         suite.addTest(TestEthNamespaceTransactionRPC("test_eth_estimateGas_error_revert"))
         suite.addTest(TestEthNamespaceTransactionRPC("test_eth_estimateGas_success"))
+        suite.addTest(TestEthNamespaceTransactionRPC("test_eth_estimateGas_success_floor_data_gas"))
         suite.addTest(TestEthNamespaceTransactionRPC("test_eth_getTransactionByHash_error_no_param"))
         suite.addTest(TestEthNamespaceTransactionRPC("test_eth_getTransactionByHash_error_wrong_type_param"))
         suite.addTest(TestEthNamespaceTransactionRPC("test_eth_getTransactionByHash_success_wrong_value_param"))
