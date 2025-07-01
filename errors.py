@@ -4,6 +4,7 @@ errors_json = """
 {
     "arg0NoParams":[-32602 ,"missing value for required argument 0"],
     "arg1NoParams":[-32602 ,"missing value for required argument 1"],
+    "arg2TooManyArgs": [-32602 ,"too many arguments, want at most 2"],
     "arg0NumberToString":[-32602 ,"invalid argument 0: json: cannot unmarshal number into Go value of type string"],
     "arg1NumberToString":[-32602 ,"invalid argument 1: json: cannot unmarshal number into Go value of type string"],
     "arg2NumberToString":[-32602 ,"invalid argument 2: json: cannot unmarshal number into Go value of type string"],

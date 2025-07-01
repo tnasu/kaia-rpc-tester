@@ -58,7 +58,6 @@ def checkAuthorizationListField(self, result):
     if result["type"] == "0x4":  # TxTypeEthereumSetCode
         self.assertIsNotNone(result["authorizationList"])
 
-
 def checkEthereumBlockOrHeaderFormat(self, actualReturn):
     expectedReturn = json.loads(
         """
