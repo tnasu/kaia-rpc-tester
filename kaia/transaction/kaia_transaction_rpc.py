@@ -1,6 +1,5 @@
 import unittest
 import random
-from unittest import result
 from utils import Utils
 from common import kaia as kaia_common
 
@@ -649,15 +648,18 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         params = []
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(result)
 
     def test_kaia_sendRawTransaction_error_wrong_type_param(self):
         method = f"{self.ns}_sendRawTransaction"
         params = ["abcd"]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0HexToBytes", error)
+        self.assertIsNone(result)
 
     def test_kaia_sendRawTransaction_success(self):
         Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+
         method = f"{self.ns}_getTransactionCount"
         tag = "latest"
         txFrom = test_data_set["account"]["sender"]["address"]
@@ -684,12 +686,13 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         ]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
-
         rawData = result["raw"]
+
         method = f"{self.ns}_sendRawTransaction"
         params = [rawData]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertRegex(result, "^0x[0-9a-f]{64}$")
 
     def test_kaia_sendRawTransaction_AccessList_error_wrong_prefix(self):
         method = f"{self.ns}_getTransactionCount"
@@ -700,7 +703,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-        method = f"{self.ns}_chainID"
+        method = f"{self.ns}_chainId"
         params = []
         chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
@@ -737,6 +740,8 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
 
         testSize = 300
         for i in range(0, testSize):
+            # start=81: make bigger than TxTypeKaiaLast:80
+            # end=30720: make smaller than EthereumTxTypeEnvelope:"0x78"+"00"=0x7800
             randomPrefix = hex(random.randint(81, 30720))
             if len(randomPrefix) % 2 == 1:
                 randomPrefix = f"0x0{randomPrefix[2:]}"
@@ -746,9 +751,10 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
             result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
             self.assertIsNotNone(error)
             self.assertTrue("undefined tx type" in error["message"] or "rlp:" in error["message"])
+            self.assertIsNone(result)
 
     def test_kaia_sendRawTransaction_AccessList_success(self):
-        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block")
         method = f"{self.ns}_getTransactionCount"
         tag = "latest"
         txFrom = test_data_set["account"]["sender"]["address"]
@@ -757,7 +763,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-        method = f"{self.ns}_chainID"
+        method = f"{self.ns}_chainId"
         params = []
         chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
@@ -788,12 +794,13 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         params = [transaction]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        rawData = result["raw"]
 
         method = f"{self.ns}_sendRawTransaction"
-        rawData = result["raw"]
         params = [rawData]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertRegex(result, "^0x[0-9a-f]{64}$")
 
     def test_kaia_createAccessList_success(self):
         method = f"{self.ns}_createAccessList"
@@ -818,7 +825,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-        method = f"{self.ns}_chainID"
+        method = f"{self.ns}_chainId"
         params = []
         chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
@@ -828,11 +835,6 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         txGas = hex(60400)
         txGasPrice = test_data_set["unitGasPrice"]
         txValue = hex(2441)
-        storageKeys = [
-            "0x0000000000000000000000000000000000000000000000000000000000000003",
-            "0x0000000000000000000000000000000000000000000000000000000000000007",
-        ]
-        accessList = [{"address": txFrom, "storageKeys": storageKeys}]
         transaction = {
             "from": txFrom,
             "to": txTo,
@@ -841,7 +843,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
             "maxFeePerGas": txGasPrice,
             "value": txValue,
             "nonce": nonce,
-            "accessList": accessList,
+            "accessList": [],
             "chainId": chainId,
             "typeInt": 30722,
         }
@@ -856,6 +858,8 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
 
         testSize = 300
         for i in range(0, testSize):
+            # start=81: make bigger than TxTypeKaiaLast:80
+            # end=30720: make smaller than EthereumTxTypeEnvelope:"0x78"+"00"=0x7800
             randomPrefix = hex(random.randint(81, 30720))
             if len(randomPrefix) % 2 == 1:
                 randomPrefix = f"0x0{randomPrefix[2:]}"
@@ -865,6 +869,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
             result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
             self.assertIsNotNone(error)
             self.assertTrue("undefined tx type" in error["message"] or "rlp:" in error["message"])
+            self.assertIsNone(result)
 
     def test_kaia_sendRawTransaction_DynamicFee_success(self):
         Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
@@ -876,7 +881,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
-        method = f"{self.ns}_chainID"
+        method = f"{self.ns}_chainId"
         params = []
         chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
@@ -886,11 +891,6 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         txGas = hex(60400)
         txGasPrice = test_data_set["unitGasPrice"]
         txValue = hex(2441)
-        storageKeys = [
-            "0x0000000000000000000000000000000000000000000000000000000000000003",
-            "0x0000000000000000000000000000000000000000000000000000000000000007",
-        ]
-        accessList = [{"address": txFrom, "storageKeys": storageKeys}]
         transaction = {
             "from": txFrom,
             "to": txTo,
@@ -899,7 +899,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
             "maxFeePerGas": txGasPrice,
             "value": txValue,
             "nonce": nonce,
-            "accessList": accessList,
+            "accessList": [],
             "chainId": chainId,
             "typeInt": 30722,
         }
@@ -908,12 +908,135 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         params = [transaction]
         result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
-
         rawData = result["raw"]
+
         method = f"{self.ns}_sendRawTransaction"
         params = [rawData]
-        txHash, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertRegex(result, "^0x[0-9a-f]{64}$")
+
+    def test_kaia_sendRawTransaction_SetCode_error_wrong_prefix(self):
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(60400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        authorizationList = [
+            {
+                "chainId": "0x0",
+                "address": "0x000000000000000000000000000000000000aaaa",
+                "nonce": "0x0",
+                "yParity": "0x1",
+                "r": "0x79eae4cbf85eae84eac1311d7384f4f3bca88078cde0dbf0203248b074b7c36d",
+                "s": "0x8ea1adf9dded4d8223bd6784a6bf711211b381f04a34e9bea39e3ea81213d32",
+            },
+        ]
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "maxPriorityFeePerGas": txGasPrice,
+            "maxFeePerGas": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": [],
+            "authorizationList": authorizationList,
+            "chainId": chainId,
+            "typeInt": 30724, # Type4
+        }
+
+        method = f"{self.ns}_signTransaction"
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        rawData = result["raw"]
+        rawTxWithoutHexPrefix = rawData[6:]
+
+        testSize = 300
+        for i in range(0, testSize):
+            # start=81: make bigger than TxTypeKaiaLast:80
+            # end=30720: make smaller than EthereumTxTypeEnvelope:"0x78"+"00"=7800
+            randomPrefix = hex(random.randint(81, 30720))
+            if len(randomPrefix) % 2 == 1:
+                randomPrefix = f"0x0{randomPrefix[2:]}"
+            rawTx = randomPrefix + rawTxWithoutHexPrefix
+            method = f"{self.ns}_sendRawTransaction"
+            params = [rawTx]
+            result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+            self.assertIsNotNone(error)
+            self.assertTrue("undefined tx type" in error["message"] or "rlp:" in error["message"])
+            self.assertIsNone(result)
+
+    def test_kaia_sendRawTransaction_SetCode_success(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(60400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        authorizationList = [
+            {
+                "chainId": "0x0",
+                "address": "0x000000000000000000000000000000000000aaaa",
+                "nonce": "0x0",
+                "yParity": "0x1",
+                "r": "0x79eae4cbf85eae84eac1311d7384f4f3bca88078cde0dbf0203248b074b7c36d",
+                "s": "0x8ea1adf9dded4d8223bd6784a6bf711211b381f04a34e9bea39e3ea81213d32",
+            },
+        ]
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "maxPriorityFeePerGas": txGasPrice,
+            "maxFeePerGas": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": [],
+            "authorizationList": authorizationList,
+            "chainId": chainId,
+            "typeInt": 30724, # Type4
+        }
+
+        method = f"{self.ns}_signTransaction"
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        rawData = result["raw"]
+
+        method = f"{self.ns}_sendRawTransaction"
+        params = [rawData]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertRegex(result, "^0x[0-9a-f]{64}$")
 
     def test_kaia_getTransactionByBlockHashAndIndex_error_no_param(self):
         method = f"{self.ns}_getTransactionByBlockHashAndIndex"
@@ -1426,7 +1549,22 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "arg0StringToCallArgsDataBytes", error)
 
-    def test_kaia_estimateGas_error_exceeds_allowance(self):
+    def test_kaia_estimateGas_error_insufficient_balance(self):
+        method = f"{self.ns}_estimateGas"
+        zeroBalanceAddr = "0x15318f21f3dee6b2c64d2a633cb8c1194877c882"
+        txValue = hex(1)
+        params = [
+            {
+                "from": zeroBalanceAddr,
+                "to": zeroBalanceAddr,
+                "value": txValue,
+            },
+            "latest",
+        ]
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "InsufficientBalance", error)
+
+    def test_kaia_estimateGas_error_insufficient_funds(self):
         method = f"{self.ns}_estimateGas"
         zeroBalanceAddr = "0x15318f21f3dee6b2c64d2a633cb8c1194877c882"
         contract = test_data_set["contracts"]["unknown"]["address"][0]
@@ -1445,21 +1583,42 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
             "latest",
         ]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
-        Utils.check_error(self, "GasRequiredExceedsAllowance", error)
+        Utils.check_error(self, "InsufficientFunds", error)
+
+    def test_kaia_estimateGas_error_exceeds_allowance(self):
+        method = f"{self.ns}_estimateGas"
+        address = test_data_set["account"]["1pebHolder"]["address"]
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(0)
+        params = [
+            {
+                "from": address,
+                "to": address,
+                "value": txValue,
+                "gasPrice": txGasPrice,
+            },
+            "latest",
+        ]
+        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        #Utils.check_error(self, "GasRequiredExceedsAllowance", error)
+        self.assertIsNone(error) # "arg.Gas" is handled differently
 
     def test_kaia_estimateGas_error_evm_revert_message(self):
         method = f"{self.ns}_estimateGas"
         ownerContract = test_data_set["contracts"]["unknown"]["address"][0]
         notOwner = "0x15318f21f3dee6b2c64d2a633cb8c1194877c882"
-        changeOwnerAbi = "0xa6f9dae10000000000000000000000003e2ac308cd78ac2fe162f9522deb2b56d9da9499"  # changeOwner("0x3e2ac308cd78ac2fe162f9522deb2b56d9da9499")
-        params = [{"from": notOwner, "to": ownerContract, "data": changeOwnerAbi}]
+        changeOwnerAbi = "0xa6f9dae10000000000000000000000003e2ac308cd78ac2fe162f9522deb2b56d9da9499" # changeOwner("0x3e2ac308cd78ac2fe162f9522deb2b56d9da9499")
+        params = [
+            {"from": notOwner, "to": ownerContract, "data": changeOwnerAbi},
+            "latest",
+        ]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "ExecutionReverted", error)
 
     def test_kaia_estimateGas_error_revert(self):
         method = f"{self.ns}_estimateGas"
         contract = test_data_set["contracts"]["unknown"]["address"][0]
-        params = [{"to": contract}]
+        params = [{"to": contract}, "latest"]
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         Utils.check_error(self, "ExecutionReverted", error)
 
@@ -1472,10 +1631,14 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         txGasPrice = test_data_set["unitGasPrice"]
         txValue = hex(0)
         params = [{"from": address, "to": contract, "value": txValue, "input": code}]
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertIsNotNone(result)
+        estimated_gas = int(result, 16)
+        expected_gas = 25841
+        self.assertEqual(estimated_gas, expected_gas)
 
-    def test_kaia_estimateGas_success_data_instead_input(self):
+    def test_kaia_estimateGas_success_data_for_backward_compatibility(self):
         method = f"{self.ns}_estimateGas"
         address = test_data_set["account"]["sender"]["address"]
         contract = test_data_set["contracts"]["unknown"]["address"][0]
@@ -1483,9 +1646,13 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         txGas = hex(30400)
         txGasPrice = test_data_set["unitGasPrice"]
         txValue = hex(0)
-        params = [{"from": address, "to": contract, "value": txValue, "data": code}]
-        _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        params = [{"from": address, "to": contract, "value": txValue, "data": code}] # using data
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
+        self.assertIsNotNone(result)
+        estimated_gas = int(result, 16)
+        expected_gas = 25841
+        self.assertEqual(estimated_gas, expected_gas)
 
     def test_kaia_estimateGas_success_floor_data_gas(self):
         method = f"{self.ns}_estimateGas"
@@ -1498,6 +1665,23 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         self.assertIsNotNone(result)
         estimated_gas = int(result, 16)
         expected_gas = 61510
+        self.assertEqual(estimated_gas, expected_gas)
+
+    def test_kaia_estimateGas_success_state_override_balance_and_code(self):
+        method = f"{self.ns}_estimateGas"
+        address = test_data_set["account"]["sender"]["address"]
+        contract = test_data_set["contracts"]["unknown"]["address"][0]
+        code = test_data_set["contracts"]["unknown"]["input"]
+        txGas = hex(30400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(0)
+        stateOverrides = {address: {"balance": hex(int(txGas, base=16) * int(txGasPrice, base=16))}}
+        params = [{"from": address, "to": contract, "value": txValue, "data": code}, "latest", stateOverrides]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertIsNotNone(result)
+        estimated_gas = int(result, 16)
+        expected_gas = 25841
         self.assertEqual(estimated_gas, expected_gas)
 
     def test_kaia_estimateComputationCost_success(self):
@@ -1666,6 +1850,379 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         _, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
         self.assertIsNone(error)
 
+    def test_kaia_sendRawTransactions_error_no_param(self):
+        method = f"{self.ns}_sendRawTransactions"
+        params = []
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "arg0NoParams", error)
+        self.assertIsNone(result)
+
+    def test_kaia_sendRawTransactions_error_wrong_type_param(self):
+        method = f"{self.ns}_sendRawTransactions"
+        params = [["abcd"]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        Utils.check_error(self, "arg0HexToBytes", error)
+        self.assertIsNone(result)
+
+    def test_kaia_sendRawTransactions_success(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(30400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441406250)
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_signTransaction"
+        params = [
+            {
+                "from": txFrom,
+                "to": txTo,
+                "gas": txGas,
+                "gasPrice": txGasPrice,
+                "value": txValue,
+                "nonce": nonce,
+            }
+        ]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        rawData = result["raw"]
+
+        method = f"{self.ns}_sendRawTransactions"
+        params = [[rawData]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(len(result), 1)
+        self.assertRegex(result[0], "^0x[0-9a-f]{64}$")
+
+    def test_kaia_sendRawTransactions_AccessList_error_kaia_signTransaction(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(30400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        storageKeys = [
+            "0x0000000000000000000000000000000000000000000000000000000000000003",
+            "0x0000000000000000000000000000000000000000000000000000000000000007",
+        ]
+        accessList = [{"address": txFrom, "storageKeys": storageKeys}]
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "gasPrice": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": accessList,
+            "chainId": chainId,
+            "typeInt": 30721,
+        }
+
+        method = "kaia_signTransaction" # kaia_signTransaction is not supported
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        rawData = result["raw"]
+
+        method = f"{self.ns}_sendRawTransactions"
+        params = [[rawData]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNotNone(error)
+        self.assertTrue("undefined tx type" in error["message"])
+        self.assertIsNone(result)
+
+    def test_kaia_sendRawTransactions_AccessList_success_eth_signTransaction(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(30400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        storageKeys = [
+            "0x0000000000000000000000000000000000000000000000000000000000000003",
+            "0x0000000000000000000000000000000000000000000000000000000000000007",
+        ]
+        accessList = [{"address": txFrom, "storageKeys": storageKeys}]
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "gasPrice": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": accessList,
+            "chainId": chainId,
+            "typeInt": 30721,
+        }
+
+        method = "eth_signTransaction" # eth_signTransaction is supported
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        rawData = result["raw"]
+
+        method = f"{self.ns}_sendRawTransactions"
+        params = [[rawData]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(len(result), 1)
+        self.assertRegex(result[0], "^0x[0-9a-f]{64}$")
+
+    def test_kaia_sendRawTransactions_DynamicFee_error_kaia_signTransaction(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(60400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "maxPriorityFeePerGas": txGasPrice,
+            "maxFeePerGas": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": [],
+            "chainId": chainId,
+            "typeInt": 30722,
+        }
+
+        method = "kaia_signTransaction" # kaia_signTransaction is not supported
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        rawData = result["raw"]
+
+        method = f"{self.ns}_sendRawTransactions"
+        params = [[rawData]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNotNone(error)
+        self.assertTrue("undefined tx type" in error["message"])
+        self.assertIsNone(result)
+
+    def test_kaia_sendRawTransactions_DynamicFee_success_eth_signTransaction(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(60400)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "maxPriorityFeePerGas": txGasPrice,
+            "maxFeePerGas": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": [],
+            "chainId": chainId,
+            "typeInt": 30722,
+        }
+
+        method = "eth_signTransaction" # eth_signTransaction is supported
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        rawData = result["raw"]
+        method = f"{self.ns}_sendRawTransactions"
+        params = [[rawData]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(len(result), 1)
+        self.assertRegex(result[0], "^0x[0-9a-f]{64}$")
+
+    def test_kaia_sendRawTransactions_SetCode_error_kaia_signTransaction(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(90600)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        authorizationList = [
+            {
+                "chainId": "0x0",
+                "address": "0x000000000000000000000000000000000000aaaa",
+                "nonce": "0x0",
+                "yParity": "0x1",
+                "r": "0x79eae4cbf85eae84eac1311d7384f4f3bca88078cde0dbf0203248b074b7c36d",
+                "s": "0x8ea1adf9dded4d8223bd6784a6bf711211b381f04a34e9bea39e3ea81213d32",
+            },
+            {
+                "chainId": "0x0",
+                "address": "0x000000000000000000000000000000000000bbbb",
+                "nonce": "0x1",
+                "yParity": "0x1",
+                "r": "0x79eae4cbf85eae84eac1311d7384f4f3bca88078cde0dbf0203248b074b7c36d",
+                "s": "0x8ea1adf9dded4d8223bd6784a6bf711211b381f04a34e9bea39e3ea81213d32",
+            },
+        ]
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "maxPriorityFeePerGas": txGasPrice,
+            "maxFeePerGas": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": [],
+            "authorizationList": authorizationList,
+            "chainId": chainId,
+            "typeInt": 30724, # Type4
+        }
+
+        method = "kaia_signTransaction" # kaia_signTransaction is not supported
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        rawData = result["raw"]
+        method = f"{self.ns}_sendRawTransactions"
+        params = [[rawData]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNotNone(error)
+        self.assertTrue("undefined tx type" in error["message"])
+        self.assertIsNone(result)
+
+    def test_kaia_sendRawTransactions_SetCode_success_eth_signTransaction(self):
+        Utils.waiting_count("Waiting for", 5, "seconds until writing a block.")
+        method = f"{self.ns}_getTransactionCount"
+        tag = "latest"
+        txFrom = test_data_set["account"]["sender"]["address"]
+
+        params = [txFrom, tag]
+        nonce, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        method = f"{self.ns}_chainId"
+        params = []
+        chainId, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        password = test_data_set["account"]["sender"]["password"]
+        txTo = test_data_set["account"]["sender"]["address"]
+        txGas = hex(90600)
+        txGasPrice = test_data_set["unitGasPrice"]
+        txValue = hex(2441)
+        authorizationList = [
+            {
+                "chainId": "0x0",
+                "address": "0x000000000000000000000000000000000000aaaa",
+                "nonce": "0x0",
+                "yParity": "0x1",
+                "r": "0x79eae4cbf85eae84eac1311d7384f4f3bca88078cde0dbf0203248b074b7c36d",
+                "s": "0x8ea1adf9dded4d8223bd6784a6bf711211b381f04a34e9bea39e3ea81213d32",
+            },
+            {
+                "chainId": "0x0",
+                "address": "0x000000000000000000000000000000000000bbbb",
+                "nonce": "0x1",
+                "yParity": "0x1",
+                "r": "0x79eae4cbf85eae84eac1311d7384f4f3bca88078cde0dbf0203248b074b7c36d",
+                "s": "0x8ea1adf9dded4d8223bd6784a6bf711211b381f04a34e9bea39e3ea81213d32",
+            },
+        ]
+        transaction = {
+            "from": txFrom,
+            "to": txTo,
+            "gas": txGas,
+            "maxPriorityFeePerGas": txGasPrice,
+            "maxFeePerGas": txGasPrice,
+            "value": txValue,
+            "nonce": nonce,
+            "accessList": [],
+            "authorizationList": authorizationList,
+            "chainId": chainId,
+            "typeInt": 30724, # Type4
+        }
+
+        method = "eth_signTransaction" # eth_signTransaction is supported
+        params = [transaction]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+
+        rawData = result["raw"]
+        method = f"{self.ns}_sendRawTransactions"
+        params = [[rawData]]
+        result, error = Utils.call_rpc(self.endpoint, method, params, self.log_path)
+        self.assertIsNone(error)
+        self.assertEqual(len(result), 1)
+        self.assertRegex(result[0], "^0x[0-9a-f]{64}$")
+
     @staticmethod
     def suite():
         suite = unittest.TestSuite()
@@ -1702,6 +2259,7 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_signTransaction_error_wrong_type_param6"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_signTransaction_error_wrong_value_param"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_signTransaction_success"))
+
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransaction_error_no_param"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransaction_error_wrong_type_param"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransaction_success"))
@@ -1710,6 +2268,9 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_createAccessList_success"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransaction_DynamicFee_error_wrong_prefix"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransaction_DynamicFee_success"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransaction_SetCode_error_wrong_prefix"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransaction_SetCode_success"))
+
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionByBlockHashAndIndex_error_no_param"))
         suite.addTest(
             TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionByBlockHashAndIndex_error_wrong_type_param")
@@ -1749,13 +2310,20 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_call_success3"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_call_success4"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_call_success_input_instead_data"))
+
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_no_param"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_wrong_type_param1"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_wrong_type_param2"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_insufficient_balance"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_insufficient_funds"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_exceeds_allowance"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_evm_revert_message"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_error_revert"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_success"))
-        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_success_data_instead_input"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_success_data_for_backward_compatibility"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_success_floor_data_gas"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateGas_success_state_override_balance_and_code"))
+
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateComputationCost_success"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_estimateComputationCost_success_input_instead_data"))
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionByHash_error_no_param"))
@@ -1776,4 +2344,14 @@ class TestKaiaNamespaceTransactionRPC(unittest.TestCase):
             TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionReceiptBySenderTxHash_success_wrong_value_param")
         )
         suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_getTransactionReceiptBySenderTxHash_success"))
+
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_error_no_param"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_error_wrong_type_param"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_success"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_AccessList_error_kaia_signTransaction"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_AccessList_success_eth_signTransaction"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_DynamicFee_error_kaia_signTransaction"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_DynamicFee_success_eth_signTransaction"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_SetCode_error_kaia_signTransaction"))
+        suite.addTest(TestKaiaNamespaceTransactionRPC("test_kaia_sendRawTransactions_SetCode_success_eth_signTransaction"))
         return suite
