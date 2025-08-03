@@ -396,6 +396,7 @@ class Utils(unittest.TestCase):
         target_instance must inherit unittest.TestCase class.
         """
         expected_error_code, expected_error_message = ERRORS[expected_error_key]
+        target_instance.assertIsNotNone(error)
         target_instance.assertEqual(expected_error_code, error.get("code"), error)
         target_instance.assertIn(expected_error_message, error.get("message"), error)
 

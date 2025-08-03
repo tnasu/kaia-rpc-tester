@@ -205,7 +205,8 @@ start() {
     OPTIONS="$OPTIONS --autorestart.daemon.path $BASEDIR/$CURRENTFILE"
 
     echo $OPTIONS
-    $BIN/kcn $OPTIONS >> ${LOG_DIR}/kcnd.out 2>&1 &
+    #$BIN/kcn $OPTIONS --gasless.disable --ntp.disable >> ${LOG_DIR}/kcnd.out 2>&1 &
+    $BIN/kcn $OPTIONS --ntp.disable >> ${LOG_DIR}/kcnd.out 2>&1 &
     RETVAL=$?
     PIDNUM=$!
     set +f
